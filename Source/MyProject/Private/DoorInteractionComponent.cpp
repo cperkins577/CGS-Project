@@ -18,7 +18,8 @@ UDoorInteractionComponent::UDoorInteractionComponent()
 void UDoorInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	FRotator DesiredRotation(0.0f, 90.0f, 0.0f);
+	GetOwner()->SetActorRotation(DesiredRotation);
 	// ...
 	
 }
