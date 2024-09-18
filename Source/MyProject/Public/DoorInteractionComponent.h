@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Curves/CurveFloat.h"
 #include "DoorInteractionComponent.generated.h"
+
+class ATriggerBox;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,6 +33,12 @@ protected:
 	float TimeToRotate = 1.0f;
 
 	float CurrentRotationTime = 0.0f;
+
+	UPROPERTY(EditAnywhere);
+	ATriggerBox* ATriggerBox;
+
+	UPROPERTY(EditAnywhere);
+	FRuntimeFloatCurve OpenCurve;
 
 public:	
 	// Called every frame
