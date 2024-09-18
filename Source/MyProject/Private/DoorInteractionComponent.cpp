@@ -18,9 +18,10 @@ UDoorInteractionComponent::UDoorInteractionComponent()
 void UDoorInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	DesiredRotation = FRotator(0.0f, 90.0f, 0.0f);
-	DeltaRotation = DesiredRotation - GetOwner()->GetActorRotation();
+	StartRotation = GetOwner()->GetActorRotation();
 	FinalRotation = GetOwner()->GetActorRotation() + DesiredRotation;
+
+	CurrentRotationTime = 0.0f;
 	// ...
 	
 }
@@ -30,10 +31,11 @@ void UDoorInteractionComponent::BeginPlay()
 void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	FRotator CurrentRotation = GetOwner()->GetActorRotation();
-	if (!CurrentRotation.Equals(FinalRotation, 5.0f))
+	if (CurrentRotationTime < TimeToRotate) 
 	{
-		CurrentRotation += DeltaRotation * DeltaTime;
+		CurrentRotationTime += DeltaTime;
+		const float RotationAlpha = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
+		const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
 		GetOwner()->SetActorRotation(CurrentRotation);
 	}
 	// ...
