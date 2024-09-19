@@ -23,6 +23,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	bool IsDoorClosed = true;
+
 	UPROPERTY(EditAnywhere);
 	FRotator DesiredRotation = FRotator::ZeroRotator;
 
