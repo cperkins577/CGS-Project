@@ -30,7 +30,6 @@ protected:
 
 	FRotator StartRotation = FRotator::ZeroRotator;
 	FRotator FinalRotation = FRotator::ZeroRotator;
-	FRotator OriginalRotation = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnywhere);
 	float TimeToRotate = 1.0f;
@@ -38,9 +37,7 @@ protected:
 	float CurrentRotationTime = 0.0f;
 
 	UPROPERTY(EditAnywhere);
-	ATriggerBox* ATriggerBox1;
-	UPROPERTY(EditAnywhere);
-	ATriggerBox* ATriggerBox2;
+	ATriggerBox* ATriggerBox;
 
 	UPROPERTY(EditAnywhere);
 	FRuntimeFloatCurve OpenCurve;

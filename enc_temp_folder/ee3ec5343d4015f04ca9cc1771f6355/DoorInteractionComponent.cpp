@@ -22,9 +22,8 @@ UDoorInteractionComponent::UDoorInteractionComponent()
 void UDoorInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OriginalRotation = GetOwner()->GetActorRotation();
 	StartRotation = GetOwner()->GetActorRotation();
-	//FinalRotation = GetOwner()->GetActorRotation() + DesiredRotation;
+	FinalRotation = GetOwner()->GetActorRotation() + DesiredRotation;
 
 	CurrentRotationTime = 0.0f;
 	// ...
@@ -36,15 +35,13 @@ void UDoorInteractionComponent::BeginPlay()
 void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (CurrentRotationTime < TimeToRotate)
+	if (CurrentRotationTime < TimeToRotate) 
 	{
-		if ((ATriggerBox1 || ATriggerBox2) && GetWorld()->GetFirstLocalPlayerFromController())
+		if (ATriggerBox && GetWorld()->GetFirstLocalPlayerFromController()) 
 		{
 			APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-			if (PlayerPawn && ATriggerBox1->IsOverlappingActor(PlayerPawn) && IsDoorClosed) 
+			if (PlayerPawn && ATriggerBox->IsOverlappingActor(PlayerPawn) && IsDoorClosed) 
 			{
-
-				FinalRotation = OriginalRotation + DesiredRotation;
 				CurrentRotationTime += DeltaTime;
 				const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
 				const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
@@ -52,29 +49,13 @@ void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 				GetOwner()->SetActorRotation(CurrentRotation);
 				if (CurrentRotation == FinalRotation) {
 					IsDoorClosed = false;
-					StartRotation = GetOwner()->GetActorRotation();
-					FinalRotation = OriginalRotation;
-					CurrentRotationTime = 0.0f;
+					UE_LOG(LogTemp, Warning, TEXT("Door is open."));
 				}
 			}
-			if (PlayerPawn && ATriggerBox2->IsOverlappingActor(PlayerPawn) && IsDoorClosed) 
+			else if (PlayerPawn && !ATriggerBox->IsOverlappingActor(PlayerPawn) && !IsDoorClosed) 
 			{
-
-				FinalRotation = OriginalRotation - DesiredRotation;
-				CurrentRotationTime += DeltaTime;
-				const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
-				const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
-				const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
-				GetOwner()->SetActorRotation(CurrentRotation);
-				if (CurrentRotation == FinalRotation) {
-					IsDoorClosed = false;
-					StartRotation = GetOwner()->GetActorRotation();
-					FinalRotation = OriginalRotation;
-					CurrentRotationTime = 0.0f;
-				}
-			}
-			if (PlayerPawn && !ATriggerBox1->IsOverlappingActor(PlayerPawn) && !ATriggerBox2->IsOverlappingActor(PlayerPawn) && !IsDoorClosed)
-			{
+				UE_LOG(LogTemp, Warning, TEXT("Closing door."));
+				FinalRotation = GetOwner()->GetActorRotation() - DesiredRotation;
 				CurrentRotationTime += DeltaTime;
 				const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
 				const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
@@ -82,9 +63,7 @@ void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 				GetOwner()->SetActorRotation(CurrentRotation);
 				if (CurrentRotation == FinalRotation) {
 					IsDoorClosed = true;
-					StartRotation = GetOwner()->GetActorRotation();
-					FinalRotation = GetOwner()->GetActorRotation() + DesiredRotation;
-					CurrentRotationTime = 0.0f;
+					UE_LOG(LogTemp, Warning, TEXT("Door is closed."));
 				}
 			}
 		}
