@@ -41,36 +41,37 @@ void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 		if ((ATriggerBox1 || ATriggerBox2) && GetWorld()->GetFirstLocalPlayerFromController())
 		{
 			APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-			if (PlayerPawn && ATriggerBox1->IsOverlappingActor(PlayerPawn) && IsDoorClosed) 
-			{
+			if (PlayerPawn && (ATriggerBox1->IsOverlappingActor(PlayerPawn) || ATriggerBox2->IsOverlappingActor(PlayerPawn))) {
 
-				FinalRotation = OriginalRotation + DesiredRotation;
-				CurrentRotationTime += DeltaTime;
-				const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
-				const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
-				const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
-				GetOwner()->SetActorRotation(CurrentRotation);
-				if (CurrentRotation == FinalRotation) {
-					IsDoorClosed = false;
-					StartRotation = GetOwner()->GetActorRotation();
-					FinalRotation = OriginalRotation;
-					CurrentRotationTime = 0.0f;
+				if (ATriggerBox1->IsOverlappingActor(PlayerPawn) && IsDoorClosed)
+				{
+					FinalRotation = OriginalRotation + DesiredRotation;
+					CurrentRotationTime += DeltaTime;
+					const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
+					const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
+					const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
+					GetOwner()->SetActorRotation(CurrentRotation);
+					if (CurrentRotation == FinalRotation) {
+						IsDoorClosed = false;
+						StartRotation = GetOwner()->GetActorRotation();
+						FinalRotation = OriginalRotation;
+						CurrentRotationTime = 0.0f;
+					}
 				}
-			}
-			if (PlayerPawn && ATriggerBox2->IsOverlappingActor(PlayerPawn) && IsDoorClosed) 
-			{
-
-				FinalRotation = OriginalRotation - DesiredRotation;
-				CurrentRotationTime += DeltaTime;
-				const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
-				const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
-				const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
-				GetOwner()->SetActorRotation(CurrentRotation);
-				if (CurrentRotation == FinalRotation) {
-					IsDoorClosed = false;
-					StartRotation = GetOwner()->GetActorRotation();
-					FinalRotation = OriginalRotation;
-					CurrentRotationTime = 0.0f;
+				if (ATriggerBox2->IsOverlappingActor(PlayerPawn) && IsDoorClosed)
+				{
+					FinalRotation = OriginalRotation - DesiredRotation;
+					CurrentRotationTime += DeltaTime;
+					const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
+					const float RotationAlpha = OpenCurve.GetRichCurveConst()->Eval(TimeRatio);
+					const FRotator CurrentRotation = FMath::Lerp(StartRotation, FinalRotation, RotationAlpha);
+					GetOwner()->SetActorRotation(CurrentRotation);
+					if (CurrentRotation == FinalRotation) {
+						IsDoorClosed = false;
+						StartRotation = GetOwner()->GetActorRotation();
+						FinalRotation = OriginalRotation;
+						CurrentRotationTime = 0.0f;
+					}
 				}
 			}
 			if (PlayerPawn && !ATriggerBox1->IsOverlappingActor(PlayerPawn) && !ATriggerBox2->IsOverlappingActor(PlayerPawn) && !IsDoorClosed)
