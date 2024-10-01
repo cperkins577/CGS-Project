@@ -18,3 +18,8 @@ void UObjectiveWorldSubsystem::DisplayObjectiveWidget()
 	ensureMsgf(ObjectiveWidget, TEXT("UObjectiveWorldSubsystem::DisplayObjectiveWidget Objective Widget is nullptr"));
 	ObjectiveWidget->AddToViewport();
 }
+
+void UObjectiveWorldSubsystem::OnObjectiveCompleted()
+{
+	DisplayObjectiveWidget();
+}

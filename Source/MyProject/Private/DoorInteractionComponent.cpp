@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/TriggerBox.h"
 #include "Engine/World.h"
+#include "ObjectiveWorldSubsystem.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -40,6 +41,11 @@ void UDoorInteractionComponent::BeginPlay()
 
 	CurrentRotationTime = 0.0f;
 	// ...
+	UObjectiveWorldSubsystem* ObjectiveWorldSubsystem = GetWorld()->GetSubsystem<UObjectiveWorldSubsystem>();
+	if (ObjectiveWorldSubsystem)
+	{
+		OpenedEvent.AddUObject(ObjectiveWorldSubsystem, &UObjectiveWorldSubsystem::OnObjectiveCompleted);
+	}
 	
 }
 

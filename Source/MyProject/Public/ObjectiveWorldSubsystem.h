@@ -19,6 +19,8 @@ public:
 	void CreateObjectiveWidget(TSubclassOf<UUserWidget> ObjectiveWidgetClass);
 	void DisplayObjectiveWidget();
 
+	void OnObjectiveCompleted();
+
 private:
 	UUserWidget* ObjectiveWidget = nullptr;
 	
