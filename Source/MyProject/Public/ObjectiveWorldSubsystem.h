@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Blueprint/UserWidget.h"
+#include "ObjectiveComponent.h"
 #include "ObjectiveWorldSubsystem.generated.h"
 
 /**
@@ -19,9 +20,22 @@ public:
 	void CreateObjectiveWidget(TSubclassOf<UUserWidget> ObjectiveWidgetClass);
 	void DisplayObjectiveWidget();
 
-	void OnObjectiveCompleted();
+	//void OnObjectiveCompleted();
+
+	UFUNCTION(BlueprintCallable)
+	FString GetCurrentObjectiveDescription();
+
+	UFUNCTION(BlueprintCallable)
+	void AddObjective(UObjectiveComponent* ObjectiveComponent);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveObjective(UObjectiveComponent* Objectivecomponent);
+
+	void OnObjectiveStateChanged(UObjectiveComponent* ObjectiveComponent, EObjectiveState ObjectiveState);
+
 
 private:
 	UUserWidget* ObjectiveWidget = nullptr;
 	
+	TArray<UObjectiveComponent*> Objectives;
 };
