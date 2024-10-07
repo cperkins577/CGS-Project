@@ -76,3 +76,5 @@ DerivedDataCache/*
 *.fbx
 /enc_temp_folder
 /Content/Cave_Ruins
+/Content/Assets/MarketplaceAssets
+/Content/Village
