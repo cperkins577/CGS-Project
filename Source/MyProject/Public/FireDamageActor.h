@@ -17,6 +17,7 @@ class MYPROJECT_API AFireDamageActor : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AFireDamageActor();
+	//virtual void PostActorCreated() override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,6 +26,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+	float ToggleTime = 5.0f;
+
+	float CurrentTimer = 0.0f;
 
 	UPROPERTY(EditAnywhere, NoClear)
 	UDealDamageComponent* DealDamageComponent;

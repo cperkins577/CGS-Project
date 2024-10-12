@@ -25,6 +25,9 @@ public:
 
 	UCapsuleComponent* GetTriggerCapsule() { return TriggerCapsule; }
 
+	bool IsActive() const { return bActive; }
+	void SetActive(bool IsActive) { bActive = IsActive; }
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -34,6 +37,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, NoClear)
 	UCapsuleComponent* TriggerCapsule;
+
+	bool bActive = true;
 
 /*
 public:	
