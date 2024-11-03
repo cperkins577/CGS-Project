@@ -5,20 +5,28 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/DamageType.h"
 #include "HealthComponent.h"
+#include "Particles/ParticleSystemcomponent.h"
+#include "Components/InputComponent.h"
+#include "DamageHandlerComponent.h"
 
 // Sets default values
-AMyProjectCharacter::AMyProjectCharacter()
+AMyProjectCharacter::AMyProjectCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	DamageHandlerComponent = CreateDefaultSubobject<UDamageHandlerComponent>(TEXT("DamageHandlerComponent"));
+	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle System"));
+	ParticleSystemComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void AMyProjectCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Tags.Add("Player");
 	
 }
 
@@ -33,6 +41,10 @@ void AMyProjectCharacter::Tick(float DeltaTime)
 void AMyProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	FInputActionBinding* Binding;
+
+	Binding = &PlayerInputComponent->BindAction(FName("InteractionStart"), IE_Pressed, this, &AMyProjectCharacter::StartInteraction);
+	Binding = &PlayerInputComponent->BindAction(FName("InteractionCancel"), IE_Pressed, this, &AMyProjectCharacter::StopInteraction);
 
 }
 
@@ -64,4 +76,22 @@ float AMyProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	}
 	return Damage;
 
+}
+
+void AMyProjectCharacter::SetOnFire(float BaseDamage, float DamageTotalTime, float TakeDamageInterval)
+{
+	if (DamageHandlerComponent)
+	{
+		DamageHandlerComponent->TakeFireDamage(BaseDamage, DamageTotalTime, TakeDamageInterval);
+	}
+}
+
+void AMyProjectCharacter::StartInteraction()
+{
+	OnInteractionStart.Broadcast();
+}
+
+void AMyProjectCharacter::StopInteraction()
+{
+	OnInteractionCancel.Broadcast();
 }

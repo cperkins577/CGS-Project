@@ -7,10 +7,4 @@
 void AMyProjectGameModeBase::StartPlay()
 {
 	Super::StartPlay();
-	UObjectiveWorldSubsystem* ObjectiveWorldSubsystem = GetWorld()->GetSubsystem<UObjectiveWorldSubsystem>();
-	if (ObjectiveWorldSubsystem)
-	{
-		ObjectiveWorldSubsystem->CreateObjectiveWidget(ObjectiveWidgetClass);
-		ObjectiveWorldSubsystem->DisplayObjectiveWidget();
-	}
 }

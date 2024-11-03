@@ -49,10 +49,7 @@ void UDealDamageComponent::OnOverlapBegin(class UPrimitiveComponent* OverlappedC
 	AMyProjectCharacter* PlayerCharacter = Cast<AMyProjectCharacter>(OtherActor);
 	if (PlayerCharacter)
 	{
-		TSubclassOf<UDamageType> const ValidDamageTypeClass = TSubclassOf<UDamageType>(UDamageType::StaticClass());
-		FDamageEvent DamageEvent(ValidDamageTypeClass);
-
-		PlayerCharacter->TakeDamage(BaseDamage, DamageEvent, nullptr, GetOwner());
+		PlayerCharacter->SetOnFire(BaseDamage, DamageTotalTime, TakeDamageInterval);
 	}
 }
 

@@ -7,6 +7,12 @@
 #include "HealthComponent.h"
 #include "MyProjectCharacter.generated.h"
 
+class UParticleSystemComponent;
+class UDamageHandlerComponent;
+
+DECLARE_MULTICAST_DELEGATE(FOnInteractionStart);
+DECLARE_MULTICAST_DELEGATE(FOnInteractionCancel);
+
 UCLASS()
 class MYPROJECT_API AMyProjectCharacter : public ACharacter
 {
@@ -14,7 +20,7 @@ class MYPROJECT_API AMyProjectCharacter : public ACharacter
 
 public:
 	// Sets default values for this character's properties
-	AMyProjectCharacter();
+	AMyProjectCharacter(const FObjectInitializer& Objectinitializer = FObjectInitializer::Get());
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,8 +28,14 @@ protected:
 
 	void OnDeath(bool IsFellOut);
 
+	void StartInteraction();
+	void StopInteraction();
+
 	UPROPERTY(EditAnywhere)
 	UHealthComponent* HealthComponent;
+
+	UPROPERTY(EditAnywhere)
+	UDamageHandlerComponent* DamageHandlerComponent;
 
 public:	
 	// Called every frame
@@ -36,5 +48,12 @@ public:
 	virtual void FellOutOfWorld(const class UDamageType& dmgType) override;
 
 	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	void SetOnFire(float BaseDamage, float DamageTotalTime, float TakeDamageInterval);
+
+	FOnInteractionStart OnInteractionStart;
+	FOnInteractionCancel OnInteractionCancel;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystemComponent* ParticleSystemComponent;
 
 };

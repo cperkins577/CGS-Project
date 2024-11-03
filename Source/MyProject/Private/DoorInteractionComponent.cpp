@@ -9,6 +9,7 @@
 #include "ObjectiveWorldSubsystem.h"
 #include "ObjectiveComponent.h"
 #include "DrawDebugHelpers.h"
+#include "InteractionComponent.h"
 
 constexpr float FLT_METERS(float meters) { return meters * 100.0f; }
 
@@ -31,6 +32,16 @@ UDoorInteractionComponent::UDoorInteractionComponent()
 	// ...
 }
 
+void UDoorInteractionComponent::InteractionStart()
+{
+	Super::InteractionStart();
+	if (InteractingActor)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Opening Door"));
+		OpenDoor();
+	}
+}
+
 
 // Called when the game starts
 void UDoorInteractionComponent::BeginPlay()
@@ -43,11 +54,23 @@ void UDoorInteractionComponent::BeginPlay()
 	// ...
 }
 
+void UDoorInteractionComponent::OpenDoor()
+{
+	if (IsOpen() || DoorState == EDoorState::DS_Open)
+	{
+		return;
+	}
+
+	DoorState = EDoorState::DS_Opening;
+	CurrentRotationTime = 0.0f;
+}
+
 
 // Called every frame
 void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	/*
 	if (DoorState == EDoorState::DS_Closed) 
 	{
 		if (ATriggerBox && GetWorld()->GetFirstLocalPlayerFromController()) 
@@ -61,8 +84,8 @@ void UDoorInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 		}
 
-	}
-	else if (DoorState == EDoorState::DS_Opening)
+	}*/
+	if (DoorState == EDoorState::DS_Opening)
 	{
 		CurrentRotationTime += DeltaTime;
 		const float TimeRatio = FMath::Clamp(CurrentRotationTime / TimeToRotate, 0.0f, 1.0f);
@@ -87,6 +110,7 @@ void UDoorInteractionComponent::OnDoorOpen()
 		ObjectiveComponent->SetState(EObjectiveState::OS_Completed);
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("DoorOpened"));
+	InteractionSuccess.Broadcast();
 }
 
 void UDoorInteractionComponent::OnDebugToggled(IConsoleVariable* Var)
